@@ -2,14 +2,50 @@ plugins {
     id 'java'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation 'com.opencsv:opencsv:5.6'
+}
+
+jar {
+    from sourceSets.main.output
+    from sourceSets.main.resources
+    archiveFileName = "GetResults01.jar"
+    manifest {
+        attributes(
+                'Main-Class': 'loto.FileReaderExample'
+        )
+    }
+    duplicatesStrategy = 'exclude'
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
+
+
+
+
+
+
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+
+dependencies {
+    // https://mvnrepository.com/artifact/com.github.docker-java/docker-java
+    implementation group: 'com.github.docker-java', name: 'docker-java', version: '3.3.0'
+
+    implementation 'org.apache.poi:poi:4.1.2'
+    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+    implementation 'com.opencsv:opencsv:5.5'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.12.5'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.5'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.9.2'
@@ -32,6 +68,12 @@ dependencies {
     testImplementation group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.9.1'
     // https://mvnrepository.com/artifact/org.junit.platform/junit-platform-suite-api
     testImplementation group: 'org.junit.platform', name: 'junit-platform-suite-api', version: '1.10.0'
+
+    testImplementation group: 'org.testng', name: 'testng', version: '6.14.3'
+    implementation group: 'com.googlecode.juniversalchardet', name: 'juniversalchardet', version: '1.0.3'
+    testImplementation group: 'com.googlecode.juniversalchardet', name: 'juniversalchardet', version: '1.0.3'
+
+
 
 
 

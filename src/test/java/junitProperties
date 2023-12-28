@@ -1,0 +1,42 @@
+# Включить/выключить отображение подробной информации о прогоне тестов (true/false)
+junit.jupiter.execution.verbose.default = true
+
+# Включить/выключить отображение информации о времени выполнения каждого теста (true/false)
+junit.jupiter.execution.timing.enabled = true
+
+# Отобразить максимальное количество символов в имени теста (по умолчанию 25)
+junit.jupiter.displayname.max.abbreviations = 30
+
+# Фильтр для включения тестов, которые должны быть выполнены
+junit.jupiter.include.tags = myIncludedTag, anotherIncludedTag
+
+# Фильтр для исключения тестов, которые не должны быть выполнены
+junit.jupiter.exclude.tags = excludedTag, anotherExcludedTag
+
+# Включить/выключить отображение полного имени пакета и класса при выводе результатов тестов (true/false)
+junit.jupiter.display.fullname = true
+
+# Включить/выключить отображение имени метода при выводе результатов тестов (true/false)
+junit.jupiter.display.methodnames = true
+
+# Определить консольные цвета для различных статусов тестов (ANSI-цвета)
+junit.jupiter.ansi.enabled = true
+junit.jupiter.ansi.success = green
+junit.jupiter.ansi.failure = red
+junit.jupiter.ansi.aborted = yellow
+
+# Включить/выключить отображение полного стека трассировки при ошибке (true/false)
+junit.jupiter.testinstance.lifecycle.default = per_class
+
+# Включить/выключить автоматическое открытие отчета Allure после запуска тестов (true/false)
+allure.link.issue.pattern = https://example.com/issue/{}
+
+# Задать путь к файлу Allure конфигурации (allure.properties) для кастомизации отчета
+allure.config.directory = /path/to/allure/config
+
+# Включить/выключить сохранение скриншотов в отчете Allure при ошибке (true/false)
+allure.attachments.enabled = true
+
+# Задать имя для окружения в отчете Allure
+allure.environment.name = My Test Environment
+allure.environment.system.properties = java.version, os.name, os.arch, os.version

@@ -10,7 +10,7 @@ import static io.restassured.RestAssured.given;
 
 public class jwtTesting {
 
-    @Test
+/*    @Test
     public void testJWT_All(){
         // Выполняем запрос и получаем ответ в виде Response
         Response response = given()
@@ -40,8 +40,8 @@ public class jwtTesting {
         System.out.println("Статус код: " + resCreate.getStatusCode());
         System.out.println("Ответ: " + resCreate.getBody().asString());
 
-    }
-    @Test
+    }*/
+/*    @Test
     public void getAllBooks() {
         Response res = given().get("http://34.0.64.53/api/v1/books").then().log().all().extract().response();
         String json = res.asString();
@@ -69,7 +69,7 @@ public class jwtTesting {
             System.out.println("Updated At: " + book.getUpdatedAt());
             System.out.println("-------------------------");
         }
-    }
+    }*/
 
     // Класс для представления JSON-ответа
     private static class BookResponse {

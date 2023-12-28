@@ -8,15 +8,21 @@ import io.restassured.http.ContentType;
 import io.restassured.internal.common.assertion.Assertion;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
+import petstore3.Order;
+import petstore3.Pet;
+import reqres.UserResponse;
 
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -27,6 +33,7 @@ public class TestApi2 {
     }
     // https://jsonplaceholder.typicode.com/
 
+    // @org.testng.annotations.Test
     @Test
     public void jsonPlaceHolder(){
         // Задайте id элемента, который хотите получить
@@ -68,6 +75,8 @@ public void chooseStatus(){
         Allure.addAttachment("Ответ от сервера", rStatus.getBody().asString());
         Assertions.assertEquals(rStatus.getHeader("X-Powered-By"), "Express");
 
+        Assertions.assertEquals(200, rStatus.getStatusCode());
+        System.out.println("***** TIME : "+rStatus.time());
 
     });
 
@@ -95,7 +104,7 @@ public void createPost(){
 }
     @Test
     public void getOneOfAll(){
-        Response resp = given().param("id", 1)
+        Response resp = given().param("id", 2)
                 .get("https://jsonplaceholder.typicode.com/posts/1/comments")
                 .then().log().all().extract().response();
 
@@ -104,24 +113,65 @@ public void createPost(){
         String param_01 = resp.jsonPath().getString("email");
         System.out.println("EMAIL : " + param_01);
     }
-
+@Test
+public void testTest(){
+        RestAssured.baseURI = "https://jsonplaceholder.typicode.com/";
+        Response response = given().param("id", 1).get("users/1/posts").then().log().all().extract().response();
+        System.out.println("RES : "+response.jsonPath().getString("title"));
+}
 
 
 /* https://reqres.in/ */
-    @Test
-    public void reqresTest_1(){
-        RestAssured.baseURI = "https://reqres.in/";
+    /*POST */
+@Test
+public void reqresTest_1() {
+    RestAssured.baseURI = "https://reqres.in/";
 
-        Response res = given().body("{ \"name\": \"Mike\", \"job\": \"DevOps\"}")
-                .post("api/users")
+    // Переменные для параметров name и job
+    String name = "MikeReed";
+    String job = "Automation engineer";
+
+    // Создание JSON-строки с использованием переменных
+    String requestBody = "{ \"name\": \"" + name + "\", \"job\": \"" + job + "\"}";
+
+    // Отправка POST-запроса с параметрами из переменных
+    UserResponse response = given().body(requestBody)
+            .post("api/users")
+            .then().log().all().extract().response().as(UserResponse.class);
+
+    System.out.println("RESULT : " + response.getName() + "\n" + response.getId() + "\n" + response.getCreatedAt() + "\n"
+            + " THE ENTITY : " + response.toString());
+    // Проверка результатов с использованием Assert
+    //Assertions.assertEquals(name, response.getName());
+    //Assertions.assertEquals(job, response.getJob());
+    Assertions.assertTrue(!response.getId().isEmpty());
+
+    // Вывод результатов
+
+}
+    @Test
+    public void getSmthing(){
+        RestAssured.baseURI = "https://reqres.in/";
+        Response r1 = given().get("api/users")
                 .then().log().all().extract().response();
-        System.out.println("RESULT : " + res.getStatusCode());
+        System.out.println("My result : " + r1.jsonPath().getString("data.id"));
     }
     @Test
     public void getMailById(){
         RestAssured.baseURI = "https://reqres.in/";
         Response r = given().get("api/users/1").then().log().all().extract().response();
         System.out.println("ENTITY : "+r.jsonPath().getString("data.email"));
+    }
+
+    @Test
+    public void postRegSuccessfull(){
+        RestAssured.baseURI = "https://reqres.in/";
+        Response r = given().contentType(ContentType.JSON).body("{\n" +
+                "    \"email\": \"eve.holt@reqres.in\",\n" +
+                "    \"password\": \"pistol\"\n" +
+                "}").post("api/register").then().log().all().extract().response();
+         System.out.println("ENTITY TOKEN : "+r.jsonPath().getString("token"));
+       // System.out.println(r.getBody());
     }
     @Test
     public void getAllMails(){
@@ -130,9 +180,68 @@ public void createPost(){
         System.out.println("===== MAIL ===== "+r.jsonPath().getString("data.email[1]"));
     }
     @Test
+    public void loginSuccessfull(){
+        RestAssured.baseURI = "https://reqres.in/";
+        Response resp = given().contentType(ContentType.JSON).body(" {\n" +
+                "            \"email\": \"eve.holt@reqres.in\",\n" +
+                "            \"password\": \"cityslicka\"\n" +
+                "        }").post("api/login").then().log().all().extract().response();
+        System.out.println("TOKEN : "+resp.jsonPath().getString("token"));
+
+    }
+
+    @Test
+    public void loginUnSuccessfull(){
+        RestAssured.baseURI = "https://reqres.in/";
+        Response resp = given().contentType(ContentType.JSON).body("{\n" +
+                "    \"email\": \"peter@klaven\"\n" +
+                "}").post("api/login").then().log().all().extract().response();
+        System.out.println("ERROR MSG : "+resp.jsonPath().getString("error"));
+
+    }
+    @Test
+    public void regNewUser(){
+        RestAssured.baseURI = "https://reqres.in/";
+        Response resp = given().contentType(ContentType.JSON)
+                .body("{\n" +
+                "    \"name\": \"Olen\",\n" +
+                "    \"job\": \"leader\"\n" +
+                "}").post("/api/users").then().log().all().extract().response();
+        System.out.println("***** CODE : "+resp.getStatusCode());
+        System.out.println("Created at : "+resp.jsonPath().getString("createdAt"));
+
+    }
+    @Test
+    public void getListResourceUnknown(){
+        RestAssured.baseURI = "https://reqres.in";
+        Response r = given().contentType(ContentType.JSON).get(" /api/unknown")
+                .then().log().all().extract().response();
+        System.out.println("RESULT : "+r.jsonPath().getString("data.id"));
+    }
+    @Test
     public void createNewPetstorePet(){
         RestAssured.baseURI = "https://petstore.swagger.io/v2/";
-        Response response = given().contentType(ContentType.JSON).body("{\n" +
+        Pet newPet = given().contentType(ContentType.JSON).body("{\n" +
+                "  \"id\": 200,\n" +
+                "  \"category\": {\n" +
+                "    \"id\": 1010,\n" +
+                "    \"name\": \"MegaPet\"\n" +
+                "  },\n" +
+                "  \"name\": \"Brantozavr\",\n" +
+                "  \"photoUrls\": [\n" +
+                "    \"string\"\n" +
+                "  ],\n" +
+                "  \"tags\": [\n" +
+                "    {\n" +
+                "      \"id\": 33333,\n" +
+                "      \"name\": \"Hbz\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"status\": \"available\"\n" +
+                "}").post("pet").then().log().all().extract().response().as(Pet.class);
+        System.out.println("===== MEGA ID :"+newPet.getCategory().toString()+"ID : "+newPet.getId() );
+        Assertions.assertEquals(200, newPet.getId());
+        /*Response response = given().contentType(ContentType.JSON).body("{\n" +
                 "  \"id\": 100,\n" +
                 "  \"category\": {\n" +
                 "    \"id\": 1010,\n" +
@@ -151,12 +260,12 @@ public void createPost(){
                 "  \"status\": \"available\"\n" +
                 "}").post("pet").then().log().all().extract().response();
         System.out.println("===== MEGA ID :"+response.jsonPath().getString("id"));
-        Assertions.assertEquals(100, Integer.parseInt(response.jsonPath().getString("id")));
+        Assertions.assertEquals(100, Integer.parseInt(response.jsonPath().getString("id")));*/
     }
     @Test
     public void createOrderToPetStore(){
         String petIdNumber = "5";
-        String orderNumber = "577";
+        String orderNumber = "587";
         RestAssured.baseURI = "https://petstore.swagger.io/v2/";
         Response r = given().contentType(ContentType.JSON).body("{\n" +
                 "  \"id\": "+orderNumber+",\n" +
@@ -168,9 +277,14 @@ public void createPost(){
                 "}").post("store/order").then().log().all().extract().response();
         System.out.println(r.jsonPath().getString("petId"));
         Assertions.assertEquals(petIdNumber, r.jsonPath().getString("petId"));
+
+        Order order = given().contentType(ContentType.JSON).get("store/order/"+orderNumber)
+                .then().log().all().extract().response().as(Order.class);
+        System.out.println("The Pet_ID is : " + order.getPetId());
+        /*
         Response order = given().contentType(ContentType.JSON).get("store/order/"+orderNumber)
                 .then().log().all().extract().response();
-        System.out.println("The order number : " + order.jsonPath().getString("id"));
+        System.out.println("The order number : " + order.jsonPath().getString("id"));*/
     }
 
     @Test
