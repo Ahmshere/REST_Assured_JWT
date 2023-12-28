@@ -8,11 +8,14 @@ jobs:
 - job: Build
   displayName: 'Build and Test'
   steps:
-  - task: UseJavaVersion@1
+  - task: UseJavaVersion@0
     inputs:
       versionSpec: '11'
       addToPath: true
+      jdkArchitectureOption: 'x64'
+
   - script: ./gradlew build
     displayName: 'Build Project'
+  
   - script: ./gradlew test
     displayName: 'Run Tests'
