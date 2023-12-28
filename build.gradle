@@ -28,6 +28,10 @@ jar {
 }
 
 
+task runApp(type: JavaExec, dependsOn: 'classes') {
+    main = 'loto.FileReaderExample'
+    classpath = sourceSets.main.runtimeClasspath
+}
 
 
 
