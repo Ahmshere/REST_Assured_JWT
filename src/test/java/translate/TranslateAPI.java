@@ -12,7 +12,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class TranslateAPI {
-	static String targetLanguage = "de"; // Na kakoi yazik perevodim
+	static String targetLanguage = "es"; // Na kakoi yazik perevodim
 	public static void main(String[] args) {
 		try {
 			URL url = new URL("https://text-translator2.p.rapidapi.com/translate");
